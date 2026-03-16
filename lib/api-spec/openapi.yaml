@@ -1,22 +1,37 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Kavariedit API specification
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: auth
+    description: Authentication
+  - name: brand-dna
+    description: Brand DNA Extractor
+  - name: templates
+    description: Template Library
+  - name: voice
+    description: AI Voice Studio
+  - name: niches
+    description: Trending Niche Radar
+  - name: sprint
+    description: Sprint Tracker
+  - name: calculator
+    description: Profit Calculator
+  - name: user
+    description: User profile
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +39,420 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /auth/user:
+    get:
+      operationId: getCurrentAuthUser
+      tags: [auth]
+      summary: Get current authenticated user
+      responses:
+        "200":
+          description: Current auth state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetCurrentAuthUserResponse"
+
+  /mobile-auth/token-exchange:
+    post:
+      operationId: exchangeMobileAuthorizationCode
+      tags: [auth]
+      summary: Exchange mobile auth code for session token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExchangeMobileAuthorizationCodeBody"
+      responses:
+        "200":
+          description: Session token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExchangeMobileAuthorizationCodeResponse"
+
+  /mobile-auth/logout:
+    post:
+      operationId: logoutMobileSession
+      tags: [auth]
+      summary: Logout mobile session
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LogoutMobileSessionResponse"
+
+  /brand-dna:
+    get:
+      operationId: getBrandDnaProfiles
+      tags: [brand-dna]
+      summary: Get all brand DNA profiles for the current user
+      responses:
+        "200":
+          description: List of brand DNA profiles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BrandDnaProfile"
+    post:
+      operationId: extractBrandDna
+      tags: [brand-dna]
+      summary: Extract brand DNA from a URL or handle
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExtractBrandDnaBody"
+      responses:
+        "200":
+          description: Extracted brand DNA profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BrandDnaProfile"
+
+  /brand-dna/{id}:
+    delete:
+      operationId: deleteBrandDnaProfile
+      tags: [brand-dna]
+      summary: Delete a brand DNA profile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /brand-dna/{id}/set-default:
+    post:
+      operationId: setDefaultBrandDna
+      tags: [brand-dna]
+      summary: Set a brand DNA profile as default
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /templates:
+    get:
+      operationId: getTemplates
+      tags: [templates]
+      summary: Get all templates
+      parameters:
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of templates
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Template"
+
+  /templates/{id}:
+    get:
+      operationId: getTemplate
+      tags: [templates]
+      summary: Get a single template by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Template detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Template"
+
+  /templates/{id}/customize:
+    post:
+      operationId: trackTemplateCustomization
+      tags: [templates]
+      summary: Track that a user customized a template
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /voice/status:
+    get:
+      operationId: getVoiceStatus
+      tags: [voice]
+      summary: Get the user's voice clone status and usage
+      responses:
+        "200":
+          description: Voice status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VoiceStatus"
+
+  /voice/create:
+    post:
+      operationId: createVoiceClone
+      tags: [voice]
+      summary: Create a voice clone from an audio sample
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateVoiceCloneBody"
+      responses:
+        "200":
+          description: Voice clone created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VoiceStatus"
+
+  /voice/generate:
+    post:
+      operationId: generateVoiceover
+      tags: [voice]
+      summary: Generate a voiceover from text
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerateVoiceoverBody"
+      responses:
+        "200":
+          description: Voiceover generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VoiceoverResult"
+
+  /voice/history:
+    get:
+      operationId: getVoiceoverHistory
+      tags: [voice]
+      summary: Get the user's voiceover history
+      responses:
+        "200":
+          description: Voiceover history
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/VoiceoverHistoryItem"
+
+  /niches:
+    get:
+      operationId: getTrendingNiches
+      tags: [niches]
+      summary: Get trending niches
+      responses:
+        "200":
+          description: List of trending niches
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TrendingNiche"
+
+  /niches/{id}:
+    get:
+      operationId: getTrendingNiche
+      tags: [niches]
+      summary: Get a single trending niche with product ideas
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Niche detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrendingNicheDetail"
+
+  /sprint:
+    get:
+      operationId: getSprintStatus
+      tags: [sprint]
+      summary: Get the user's current sprint status
+      responses:
+        "200":
+          description: Sprint status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SprintStatus"
+    post:
+      operationId: startSprint
+      tags: [sprint]
+      summary: Start a new 14-day sprint
+      responses:
+        "200":
+          description: Sprint started
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SprintStatus"
+
+  /sprint/tasks/{day}/complete:
+    post:
+      operationId: completeSprintTask
+      tags: [sprint]
+      summary: Mark a sprint day task as complete
+      parameters:
+        - name: day
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Task completed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SprintStatus"
+
+  /sprint/restart:
+    post:
+      operationId: restartSprint
+      tags: [sprint]
+      summary: Restart the sprint from day 1
+      responses:
+        "200":
+          description: Sprint restarted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SprintStatus"
+
+  /calculator/calculate:
+    post:
+      operationId: calculateProfit
+      tags: [calculator]
+      summary: Calculate profit across platforms
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CalculateProfitBody"
+      responses:
+        "200":
+          description: Profit calculation results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProfitCalculationResult"
+
+  /user/profile:
+    get:
+      operationId: getUserProfile
+      tags: [user]
+      summary: Get user profile
+      responses:
+        "200":
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+    patch:
+      operationId: updateUserProfile
+      tags: [user]
+      summary: Update user profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserProfileBody"
+      responses:
+        "200":
+          description: Updated profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+
+  /user/stats:
+    get:
+      operationId: getUserStats
+      tags: [user]
+      summary: Get user usage stats
+      responses:
+        "200":
+          description: User stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserStats"
+
+  /social-templates:
+    get:
+      operationId: getSocialTemplates
+      tags: [templates]
+      summary: Get social content templates with captions
+      parameters:
+        - name: platform
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Social templates list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SocialTemplate"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +463,468 @@ components:
       required:
         - status
 
+    AuthUser:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: ["string", "null"]
+        firstName:
+          type: ["string", "null"]
+        lastName:
+          type: ["string", "null"]
+        profileImageUrl:
+          type: ["string", "null"]
+      required:
+        - id
+
+    GetCurrentAuthUserResponse:
+      type: object
+      properties:
+        user:
+          oneOf:
+            - $ref: "#/components/schemas/AuthUser"
+            - type: "null"
+      required:
+        - user
+
+    ExchangeMobileAuthorizationCodeBody:
+      type: object
+      properties:
+        code:
+          type: string
+        code_verifier:
+          type: string
+        redirect_uri:
+          type: string
+        state:
+          type: string
+        nonce:
+          type: ["string", "null"]
+      required:
+        - code
+        - code_verifier
+        - redirect_uri
+        - state
+
+    ExchangeMobileAuthorizationCodeResponse:
+      type: object
+      properties:
+        token:
+          type: string
+      required:
+        - token
+
+    LogoutMobileSessionResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+      required:
+        - success
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+      required:
+        - success
+
+    BrandDnaProfile:
+      type: object
+      properties:
+        id:
+          type: string
+        sourceUrl:
+          type: string
+        sourceType:
+          type: string
+          enum: [instagram, etsy, other]
+        primaryColor:
+          type: string
+        secondaryColor:
+          type: string
+        accentColor:
+          type: string
+        neutralColor:
+          type: string
+        backgroundColor:
+          type: string
+        fontMood:
+          type: string
+        contentVibe:
+          type: string
+        isDefault:
+          type: boolean
+        createdAt:
+          type: string
+      required:
+        - id
+        - sourceUrl
+        - sourceType
+        - primaryColor
+        - secondaryColor
+        - accentColor
+        - neutralColor
+        - backgroundColor
+        - fontMood
+        - contentVibe
+        - isDefault
+        - createdAt
+
+    ExtractBrandDnaBody:
+      type: object
+      properties:
+        url:
+          type: string
+      required:
+        - url
+
+    Template:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        category:
+          type: string
+        thumbnailUrl:
+          type: string
+        dimensionsWidth:
+          type: integer
+        dimensionsHeight:
+          type: integer
+        templateData:
+          type: object
+          additionalProperties: true
+      required:
+        - id
+        - title
+        - category
+        - thumbnailUrl
+        - dimensionsWidth
+        - dimensionsHeight
+
+    SocialTemplate:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        platform:
+          type: string
+          enum: [instagram, pinterest, tiktok]
+        thumbnailUrl:
+          type: string
+        dimensionsWidth:
+          type: integer
+        dimensionsHeight:
+          type: integer
+        captionSuggestions:
+          type: array
+          items:
+            type: string
+        templateData:
+          type: object
+          additionalProperties: true
+      required:
+        - id
+        - title
+        - platform
+        - thumbnailUrl
+        - dimensionsWidth
+        - dimensionsHeight
+        - captionSuggestions
+
+    VoiceStatus:
+      type: object
+      properties:
+        hasVoiceClone:
+          type: boolean
+        voiceId:
+          type: ["string", "null"]
+        voiceoversUsedThisMonth:
+          type: integer
+        voiceoverLimit:
+          type: integer
+        subscriptionTier:
+          type: string
+      required:
+        - hasVoiceClone
+        - voiceId
+        - voiceoversUsedThisMonth
+        - voiceoverLimit
+        - subscriptionTier
+
+    CreateVoiceCloneBody:
+      type: object
+      properties:
+        audioBase64:
+          type: string
+        name:
+          type: string
+      required:
+        - audioBase64
+        - name
+
+    GenerateVoiceoverBody:
+      type: object
+      properties:
+        text:
+          type: string
+      required:
+        - text
+
+    VoiceoverResult:
+      type: object
+      properties:
+        id:
+          type: string
+        audioUrl:
+          type: string
+        text:
+          type: string
+        createdAt:
+          type: string
+      required:
+        - id
+        - audioUrl
+        - text
+        - createdAt
+
+    VoiceoverHistoryItem:
+      type: object
+      properties:
+        id:
+          type: string
+        text:
+          type: string
+        audioUrl:
+          type: string
+        createdAt:
+          type: string
+      required:
+        - id
+        - text
+        - audioUrl
+        - createdAt
+
+    TrendingNiche:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        demandScore:
+          type: integer
+        competitionLevel:
+          type: string
+          enum: [low, medium, high]
+        description:
+          type: string
+        lastUpdated:
+          type: string
+      required:
+        - id
+        - name
+        - demandScore
+        - competitionLevel
+        - description
+        - lastUpdated
+
+    TrendingNicheDetail:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        demandScore:
+          type: integer
+        competitionLevel:
+          type: string
+          enum: [low, medium, high]
+        description:
+          type: string
+        productIdeas:
+          type: array
+          items:
+            type: string
+        relatedTemplateIds:
+          type: array
+          items:
+            type: string
+        lastUpdated:
+          type: string
+      required:
+        - id
+        - name
+        - demandScore
+        - competitionLevel
+        - description
+        - productIdeas
+        - relatedTemplateIds
+        - lastUpdated
+
+    SprintDay:
+      type: object
+      properties:
+        day:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        isCompleted:
+          type: boolean
+        completedAt:
+          type: ["string", "null"]
+      required:
+        - day
+        - title
+        - description
+        - isCompleted
+        - completedAt
+
+    SprintStatus:
+      type: object
+      properties:
+        isActive:
+          type: boolean
+        startedAt:
+          type: ["string", "null"]
+        currentDay:
+          type: integer
+        completedDays:
+          type: integer
+        days:
+          type: array
+          items:
+            $ref: "#/components/schemas/SprintDay"
+      required:
+        - isActive
+        - startedAt
+        - currentDay
+        - completedDays
+        - days
+
+    CalculateProfitBody:
+      type: object
+      properties:
+        price:
+          type: number
+        quantityPerMonth:
+          type: integer
+        platforms:
+          type: array
+          items:
+            type: string
+            enum: [etsy, gumroad, shopify, stanstore]
+      required:
+        - price
+        - quantityPerMonth
+        - platforms
+
+    PlatformResult:
+      type: object
+      properties:
+        platform:
+          type: string
+        grossRevenue:
+          type: number
+        fees:
+          type: number
+        netProfit:
+          type: number
+        unitsToHit1000:
+          type: integer
+        feeBreakdown:
+          type: array
+          items:
+            $ref: "#/components/schemas/FeeBreakdown"
+      required:
+        - platform
+        - grossRevenue
+        - fees
+        - netProfit
+        - unitsToHit1000
+        - feeBreakdown
+
+    FeeBreakdown:
+      type: object
+      properties:
+        name:
+          type: string
+        amount:
+          type: number
+      required:
+        - name
+        - amount
+
+    ProfitCalculationResult:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/PlatformResult"
+      required:
+        - results
+
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: ["string", "null"]
+        firstName:
+          type: ["string", "null"]
+        lastName:
+          type: ["string", "null"]
+        profileImageUrl:
+          type: ["string", "null"]
+        subscriptionTier:
+          type: string
+        createdAt:
+          type: string
+      required:
+        - id
+        - subscriptionTier
+        - createdAt
+
+    UpdateUserProfileBody:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+
+    UserStats:
+      type: object
+      properties:
+        templatesDownloadedThisMonth:
+          type: integer
+        voiceoversUsedThisMonth:
+          type: integer
+        voiceoverLimit:
+          type: integer
+        brandDnaProfilesCount:
+          type: integer
+        sprintDay:
+          type: integer
+        sprintIsActive:
+          type: boolean
+      required:
+        - templatesDownloadedThisMonth
+        - voiceoversUsedThisMonth
+        - voiceoverLimit
+        - brandDnaProfilesCount
+        - sprintDay
+        - sprintIsActive

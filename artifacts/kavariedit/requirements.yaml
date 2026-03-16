@@ -1,0 +1,27 @@
+packages:
+  "framer-motion": "For page transitions and smooth UI animations"
+  "react-confetti": "For celebrating sprint milestone completions"
+  "fabric": "Canvas manipulation for the template editor"
+  "date-fns": "For formatting dates in the sprint tracker and history"
+  "@hookform/resolvers": "For Zod form validation"
+
+images:
+  - path: "artifacts/kavariedit/public/images/hero-abstract.png"
+    description: "Elegant 3D abstract shapes in soft pastel blush, mauve, and cream colors, floating softly with elegant lighting, suitable for a feminine SaaS landing page hero"
+    aspect_ratio: "16:9"
+  - path: "artifacts/kavariedit/public/images/logo-mark.png"
+    description: "Minimalist elegant logo mark featuring a stylized letter K with organic flowing lines in deep mauve on a transparent background"
+    aspect_ratio: "1:1"
+  - path: "artifacts/kavariedit/public/images/template-planner.png"
+    description: "Aesthetic digital planner mockup on a soft beige background, minimal and elegant style"
+    aspect_ratio: "3:4"
+  - path: "artifacts/kavariedit/public/images/template-ig.png"
+    description: "Aesthetic instagram post mockup with soft blush background and elegant typography"
+    aspect_ratio: "1:1"
+  - path: "artifacts/kavariedit/public/images/avatar-default.png"
+    description: "Soft minimalist elegant feminine illustration of a faceless avatar in pastel tones"
+    aspect_ratio: "1:1"
+
+notes:
+  - using Replit Auth from @workspace/replit-auth-web
+  - assuming fabric.js v5/v6 compatible imports
