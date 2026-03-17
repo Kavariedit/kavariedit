@@ -199,3 +199,21 @@ Your job is to be the developer they would hire if they could afford a great one
 **Notes for next session:**
 - No open bugs or pending tasks identified
 - Frontend pages and API routes are all in place — next logical step may be wiring frontend calls to the API or UX refinements
+
+### Session: 2026-03-17 (evening)
+
+**What we did:**
+- Added AI social post generator feature — users paste a blog URL and get 5 social media posts back
+- Installed `openai` npm package in api-server (`^6.29.0`)
+- Created `artifacts/api-server/src/routes/social-posts.ts` — new POST `/api/social-posts/generate` endpoint
+  - Fetches the blog URL server-side, strips HTML, sends content to OpenAI `gpt-4o-mini`
+  - Returns array of 5 varied posts (different tones/styles)
+  - Handles fetch errors with user-friendly message
+- Registered new route in `artifacts/api-server/src/routes/index.ts`
+- Updated `artifacts/kavariedit/src/pages/SocialTemplates.tsx` — added "AI Generator" tab alongside existing "Templates" tab
+  - URL input field, Generate button with loading spinner, 5 result cards with hover-to-copy
+
+**Notes for next session:**
+- Pre-existing TypeScript errors exist across api-server and kavariedit (missing exports from `@workspace/db` and `@workspace/api-zod`) — these are NOT from today's work and were present before
+- Voice Studio endpoint is still a placeholder (returns a dummy audio URL) — real TTS integration pending
+- `git pull` has no remote tracking on master — push will need `git push origin master` explicitly
