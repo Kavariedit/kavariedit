@@ -30,7 +30,7 @@ export default function Dashboard() {
             <p className="text-muted-foreground mt-2 text-lg">Let's build your aesthetic digital empire today.</p>
           </div>
           <Button asChild className="rounded-full shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30">
-            <Link href="/templates">Create New Product</Link>
+            <Link href="/templates">Create a Product</Link>
           </Button>
         </div>
 
