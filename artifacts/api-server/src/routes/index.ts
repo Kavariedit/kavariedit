@@ -8,6 +8,7 @@ import nichesRouter from "./niches";
 import sprintRouter from "./sprint";
 import calculatorRouter from "./calculator";
 import userRouter from "./user";
+import socialPostsRouter from "./social-posts";
 
 const router: IRouter = Router();
 
@@ -20,5 +21,6 @@ router.use(nichesRouter);
 router.use(sprintRouter);
 router.use(calculatorRouter);
 router.use(userRouter);
+router.use(socialPostsRouter);
 
 export default router;
