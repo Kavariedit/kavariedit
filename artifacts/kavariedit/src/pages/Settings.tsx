@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, UserCircle, Star } from "lucide-react";
+import { Loader2, UserCircle, Star, Mail } from "lucide-react";
 
 export default function Settings() {
   const { user } = useAuth();
@@ -17,6 +17,7 @@ export default function Settings() {
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [sendingTestEmail, setSendingTestEmail] = useState(false);
 
   useEffect(() => {
     if (profile) {
@@ -32,6 +33,24 @@ export default function Settings() {
       toast({ title: "Profile Updated", description: "Your changes have been saved." });
     } catch (e) {
       toast({ title: "Error", description: "Failed to update profile.", variant: "destructive" });
+    }
+  };
+
+  const handleSendTestEmail = async () => {
+    setSendingTestEmail(true);
+    try {
+      const response = await fetch("/api/test-email", { method: "POST" });
+      const data = await response.json();
+      
+      if (!response.ok) {
+        toast({ title: "Error", description: data.error || "Failed to send test email.", variant: "destructive" });
+      } else {
+        toast({ title: "Success", description: "Test email sent! Check your inbox." });
+      }
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to send test email.", variant: "destructive" });
+    } finally {
+      setSendingTestEmail(false);
     }
   };
 
@@ -113,6 +132,26 @@ export default function Settings() {
                   </div>
                   <Button className="shadow-md shadow-primary/20 shrink-0">Upgrade to Pro</Button>
                 </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-white hover-elevate border-border/60">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-xl flex items-center gap-2">
+                  <Mail className="w-5 h-5 text-blue-500" /> Email Service
+                </CardTitle>
+                <CardDescription>Test your email configuration</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-4">Send a test email to verify that your Resend API is configured correctly.</p>
+                <Button 
+                  onClick={handleSendTestEmail} 
+                  disabled={sendingTestEmail}
+                  className="shadow-md"
+                >
+                  {sendingTestEmail ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Mail className="w-4 h-4 mr-2" />}
+                  {sendingTestEmail ? "Sending..." : "Send Test Email"}
+                </Button>
               </CardContent>
             </Card>
 
