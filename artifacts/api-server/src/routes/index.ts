@@ -9,6 +9,7 @@ import sprintRouter from "./sprint";
 import calculatorRouter from "./calculator";
 import userRouter from "./user";
 import socialPostsRouter from "./social-posts";
+import testEmailRouter from "./test-email";
 
 const router: IRouter = Router();
 
@@ -22,5 +23,6 @@ router.use(sprintRouter);
 router.use(calculatorRouter);
 router.use(userRouter);
 router.use(socialPostsRouter);
+router.use(testEmailRouter);
 
 export default router;

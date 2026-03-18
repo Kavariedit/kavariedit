@@ -5,9 +5,21 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Link } from "wouter";
 import { useGetUserStats, useGetSprintStatus, useGetTrendingNiches } from "@workspace/api-client-react";
-import { ArrowRight, Flag, Flame, Mic2, Palette, Play } from "lucide-react";
+import { ArrowRight, Flag, Flame, Mail, Mic2, Palette, Play } from "lucide-react";
+import { useState } from "react";
 
 export default function Dashboard() {
+  const [emailStatus, setEmailStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+
+  async function sendTestEmail() {
+    setEmailStatus("sending");
+    try {
+      const res = await fetch("/api/test-email", { method: "POST" });
+      setEmailStatus(res.ok ? "sent" : "error");
+    } catch {
+      setEmailStatus("error");
+    }
+  }
   const { user } = useAuth();
   
   // These will error if endpoints don't exist yet, which is expected per instructions
@@ -29,9 +41,24 @@ export default function Dashboard() {
             </h1>
             <p className="text-muted-foreground mt-2 text-lg">Let's build your aesthetic digital empire today.</p>
           </div>
-          <Button asChild className="rounded-full shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30">
-            <Link href="/templates">Create a Product</Link>
-          </Button>
+          <div className="flex gap-2 flex-wrap">
+            <Button asChild className="rounded-full shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30">
+              <Link href="/templates">Create a Product</Link>
+            </Button>
+            {/* TEMP: remove once email is confirmed working */}
+            <Button
+              variant="outline"
+              className="rounded-full gap-2"
+              onClick={sendTestEmail}
+              disabled={emailStatus === "sending"}
+            >
+              <Mail className="w-4 h-4" />
+              {emailStatus === "idle" && "Send Test Email"}
+              {emailStatus === "sending" && "Sending..."}
+              {emailStatus === "sent" && "Email Sent ✓"}
+              {emailStatus === "error" && "Failed — check console"}
+            </Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
