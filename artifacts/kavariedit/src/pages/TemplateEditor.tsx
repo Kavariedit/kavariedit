@@ -82,7 +82,7 @@ export default function TemplateEditor() {
       // Mock tracking API call
       await trackMutation.mutateAsync({ id });
       
-      const dataURL = canvas.toDataURL({ format: 'png', quality: 1 });
+      const dataURL = canvas.toDataURL({ multiplier: 1, format: 'png', quality: 1 });
       const link = document.createElement('a');
       link.download = `${template?.title || 'design'}-kavariedit.png`;
       link.href = dataURL;

@@ -172,7 +172,7 @@ router.delete("/brand-dna/:id", async (req: Request, res: Response) => {
     .delete(brandDnaProfilesTable)
     .where(
       and(
-        eq(brandDnaProfilesTable.id, req.params.id),
+        eq(brandDnaProfilesTable.id, req.params.id as string),
         eq(brandDnaProfilesTable.userId, req.user.id),
       ),
     );
@@ -196,7 +196,7 @@ router.post("/brand-dna/:id/set-default", async (req: Request, res: Response) =>
     .set({ isDefault: true })
     .where(
       and(
-        eq(brandDnaProfilesTable.id, req.params.id),
+        eq(brandDnaProfilesTable.id, req.params.id as string),
         eq(brandDnaProfilesTable.userId, req.user.id),
       ),
     );

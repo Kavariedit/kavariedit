@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Link } from "wouter";
 import { useGetUserStats, useGetSprintStatus, useGetTrendingNiches } from "@workspace/api-client-react";
-import { ArrowRight, Flame, Mic2, Palette, Play } from "lucide-react";
+import { ArrowRight, Flag, Flame, Mic2, Palette, Play } from "lucide-react";
 
 export default function Dashboard() {
   const { user } = useAuth();

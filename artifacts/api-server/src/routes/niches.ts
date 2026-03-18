@@ -29,7 +29,7 @@ router.get("/niches/:id", async (req: Request, res: Response) => {
   const [niche] = await db
     .select()
     .from(trendingNichesTable)
-    .where(eq(trendingNichesTable.id, req.params.id))
+    .where(eq(trendingNichesTable.id, req.params.id as string))
     .limit(1);
 
   if (!niche) {

@@ -202,7 +202,7 @@ router.post("/sprint/tasks/:day/complete", async (req: Request, res: Response) =
     return;
   }
 
-  const day = parseInt(req.params.day, 10);
+  const day = parseInt(req.params.day as string, 10);
   if (isNaN(day) || day < 1 || day > 14) {
     res.status(400).json({ error: "Invalid day" });
     return;

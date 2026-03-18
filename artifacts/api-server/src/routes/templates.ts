@@ -42,7 +42,7 @@ router.get("/templates/:id", async (req: Request, res: Response) => {
   const [template] = await db
     .select()
     .from(templatesTable)
-    .where(eq(templatesTable.id, req.params.id))
+    .where(eq(templatesTable.id, req.params.id as string))
     .limit(1);
 
   if (!template) {
@@ -71,7 +71,7 @@ router.post("/templates/:id/customize", async (req: Request, res: Response) => {
 
   await db.insert(userTemplateCustomizationsTable).values({
     userId: req.user.id,
-    templateId: req.params.id,
+    templateId: req.params.id as string,
   });
 
   res.json(TrackTemplateCustomizationResponse.parse({ success: true }));
