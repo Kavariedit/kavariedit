@@ -8,7 +8,7 @@ router.post("/test-email", async (_req: Request, res: Response) => {
 
   const { error } = await resend.emails.send({
     from: "onboarding@resend.dev",
-    to: "kayleydoyle13@gmail.com",
+    to: "kavariedit@gmail.com",
     subject: "🎉 Your email is working!",
     text: "If you're reading this, your Resend API is set up correctly. You can now send emails from your app!",
   });
