@@ -200,6 +200,22 @@ Your job is to be the developer they would hire if they could afford a great one
 - No open bugs or pending tasks identified
 - Frontend pages and API routes are all in place — next logical step may be wiring frontend calls to the API or UX refinements
 
+### Session: 2026-03-19
+
+**What we did:**
+- Wired up real OpenAI TTS for Voice Studio (was returning a dummy Star Wars audio URL)
+- Changed "Create Voice Clone" step → "Choose Your Voice" — shows 6 OpenAI voice option cards (Nova, Shimmer, Alloy, Echo, Fable, Onyx)
+- Voice selection stored as `voiceCloneId` in DB (the OpenAI voice name directly)
+- `/voice/generate` now calls `openai.audio.speech.create()`, saves .mp3 to `api-server/audio/`, serves via `/audio/` static route
+- `/voice/create` now validates the voice name against valid OpenAI voices
+- Wired up Play (toggle) and Download buttons in the history sidebar
+- `app.ts` creates `audio/` directory on startup and serves it statically
+
+**Notes for next session:**
+- `OPENAI_API_KEY` env var must be set for TTS to work
+- Audio files are saved locally to `api-server/audio/` — in production these should move to S3/object storage
+- Pre-existing TypeScript errors in api-server and kavariedit (unrelated to voice work) still present
+
 ### Session: 2026-03-17 (evening)
 
 **What we did:**

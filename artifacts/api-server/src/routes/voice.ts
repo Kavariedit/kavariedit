@@ -9,6 +9,15 @@ import {
   GenerateVoiceoverResponse,
   GetVoiceoverHistoryResponse,
 } from "@workspace/api-zod";
+import OpenAI from "openai";
+import { join } from "path";
+import { writeFile } from "fs/promises";
+import { audioDir } from "../app";
+
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+const VALID_VOICES = ["alloy", "echo", "fable", "onyx", "nova", "shimmer"] as const;
+type OpenAIVoice = (typeof VALID_VOICES)[number];
 
 const router: IRouter = Router();
 
@@ -79,13 +88,17 @@ router.post("/voice/create", async (req: Request, res: Response) => {
     return;
   }
 
-  const voiceId = `voice_${req.user.id}_${Date.now()}`;
+  const voiceName = parsed.data.name;
+  if (!VALID_VOICES.includes(voiceName as OpenAIVoice)) {
+    res.status(400).json({ error: "Invalid voice name." });
+    return;
+  }
 
   const profile = await getOrCreateProfile(req.user.id);
 
   await db
     .update(userProfilesTable)
-    .set({ voiceCloneId: voiceId })
+    .set({ voiceCloneId: voiceName })
     .where(eq(userProfilesTable.id, req.user.id));
 
   const limit = profile.subscriptionTier === "pro" ? 999 : FREE_TIER_LIMIT;
@@ -93,7 +106,7 @@ router.post("/voice/create", async (req: Request, res: Response) => {
   res.json(
     CreateVoiceCloneResponse.parse({
       hasVoiceClone: true,
-      voiceId,
+      voiceId: voiceName,
       voiceoversUsedThisMonth: profile.voiceoversUsedThisMonth,
       voiceoverLimit: limit,
       subscriptionTier: profile.subscriptionTier,
@@ -128,12 +141,26 @@ router.post("/voice/generate", async (req: Request, res: Response) => {
     return;
   }
 
+  const voice = profile.voiceCloneId as OpenAIVoice;
+  const text = parsed.data.text.slice(0, 4000);
+
+  const ttsResponse = await openai.audio.speech.create({
+    model: "tts-1",
+    voice,
+    input: text,
+  });
+
+  const filename = `${req.user.id}_${Date.now()}.mp3`;
+  const filepath = join(audioDir, filename);
+  await writeFile(filepath, Buffer.from(await ttsResponse.arrayBuffer()));
+
+  const baseUrl = `${req.protocol}://${req.get("host")}`;
+  const audioUrl = `${baseUrl}/audio/${filename}`;
+
   await db
     .update(userProfilesTable)
     .set({ voiceoversUsedThisMonth: (profile.voiceoversUsedThisMonth || 0) + 1 })
     .where(eq(userProfilesTable.id, req.user.id));
-
-  const audioUrl = `https://www2.cs.uic.edu/~i101/SoundFiles/StarWars3.wav`;
 
   const [entry] = await db
     .insert(voiceoverHistoryTable)
