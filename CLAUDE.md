@@ -216,6 +216,28 @@ Your job is to be the developer they would hire if they could afford a great one
 - Audio files are saved locally to `api-server/audio/` — in production these should move to S3/object storage
 - Pre-existing TypeScript errors in api-server and kavariedit (unrelated to voice work) still present
 
+### Session: 2026-03-26
+
+**What we did:**
+- Confirmed TypeScript errors from previous session logs no longer exist — both api-server and kavariedit compile cleanly
+- Migrated audio storage from local disk to S3 (`@aws-sdk/client-s3` installed, `voice.ts` now uploads buffer directly, `app.ts` cleaned up — no more local `audio/` dir or static route)
+- Built comprehensive admin dashboard at `/admin` — protected by `ADMIN_EMAIL` env var (set in Replit Secrets)
+  - API: `GET /api/admin/stats` in `artifacts/api-server/src/routes/admin.ts`
+  - Frontend: `artifacts/kavariedit/src/pages/Admin.tsx`
+  - Shows: user metrics, action feed (last 50), 4 charts (Recharts), feature usage table, power users, upsell candidates, alerts
+  - Auto-refreshes every 60 seconds
+- Added digital marketing quote to Dashboard page (above the main grid)
+
+**Env vars required:**
+- `ADMIN_EMAIL` — set in Replit Secrets ✓ (done this session)
+- `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`, `S3_BUCKET_NAME` — needed for Voice Studio audio uploads
+- `OPENAI_API_KEY` — needed for TTS and social post generation
+
+**Notes for next session:**
+- S3 env vars still need to be configured in Replit Secrets before Voice Studio audio works in production
+- 8 admin dashboard sections are "not yet tracked" placeholders (retention, geography, errors, search, session length, revenue amounts, streaks, at-risk users) — need additional instrumentation if wanted
+- No open bugs
+
 ### Session: 2026-03-17 (evening)
 
 **What we did:**
