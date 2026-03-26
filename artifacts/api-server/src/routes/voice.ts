@@ -10,9 +10,20 @@ import {
   GetVoiceoverHistoryResponse,
 } from "@workspace/api-zod";
 import OpenAI from "openai";
-import { join } from "path";
-import { writeFile } from "fs/promises";
-import { audioDir } from "../app";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+
+const s3 = new S3Client({ region: process.env.AWS_REGION ?? "us-east-1" });
+
+async function uploadAudioToS3(buffer: Buffer, filename: string): Promise<string> {
+  const bucket = process.env.S3_BUCKET_NAME!;
+  await s3.send(new PutObjectCommand({
+    Bucket: bucket,
+    Key: `audio/${filename}`,
+    Body: buffer,
+    ContentType: "audio/mpeg",
+  }));
+  return `https://${bucket}.s3.amazonaws.com/audio/${filename}`;
+}
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -151,11 +162,8 @@ router.post("/voice/generate", async (req: Request, res: Response) => {
   });
 
   const filename = `${req.user.id}_${Date.now()}.mp3`;
-  const filepath = join(audioDir, filename);
-  await writeFile(filepath, Buffer.from(await ttsResponse.arrayBuffer()));
-
-  const baseUrl = `${req.protocol}://${req.get("host")}`;
-  const audioUrl = `${baseUrl}/audio/${filename}`;
+  const audioBuffer = Buffer.from(await ttsResponse.arrayBuffer());
+  const audioUrl = await uploadAudioToS3(audioBuffer, filename);
 
   await db
     .update(userProfilesTable)
