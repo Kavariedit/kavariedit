@@ -61,6 +61,11 @@ export default function Dashboard() {
           </div>
         </div>
 
+        {/* Quote */}
+        <blockquote className="border-l-4 border-primary/40 pl-4 italic text-muted-foreground text-sm leading-relaxed">
+          "Digital marketing is the practice of promoting products, services, or brands using digital technologies—primarily the internet, but also mobile devices, social media, search engines, and other online platforms."
+        </blockquote>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main Column */}
           <div className="lg:col-span-2 space-y-6">
