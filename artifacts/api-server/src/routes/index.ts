@@ -10,9 +10,11 @@ import calculatorRouter from "./calculator";
 import userRouter from "./user";
 import socialPostsRouter from "./social-posts";
 import testEmailRouter from "./test-email";
+import adminRouter from "./admin";
 
 const router: IRouter = Router();
 
+router.use(adminRouter);
 router.use(healthRouter);
 router.use(authRouter);
 router.use(brandDnaRouter);

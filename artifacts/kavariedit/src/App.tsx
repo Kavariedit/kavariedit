@@ -17,6 +17,7 @@ import NicheRadar from "./pages/NicheRadar";
 import SprintTracker from "./pages/SprintTracker";
 import ProfitCalculator from "./pages/ProfitCalculator";
 import Settings from "./pages/Settings";
+import Admin from "./pages/Admin";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -42,6 +43,7 @@ function Router() {
       <Route path="/sprint" component={SprintTracker} />
       <Route path="/calculator" component={ProfitCalculator} />
       <Route path="/settings" component={Settings} />
+      <Route path="/admin" component={Admin} />
       <Route component={NotFound} />
     </Switch>
   );
